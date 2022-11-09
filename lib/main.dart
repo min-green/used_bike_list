@@ -26,18 +26,23 @@ void test() async{
 
   var keywordElements = documnet.querySelectorAll('table');
   List<Map<String, dynamic>> keywords = [];
+  keywordElements[91].querySelector('.list_content_B')?.nodes.toString();
   for (var element in keywordElements){
-    var link = element.querySelector('.list_title_B');
-    var rank = element.querySelector('.list_content_B');
-    //   var title = element.querySelector('.cd_tit');
+    var link1 = element.querySelectorAll('.list_title_B');
+    var link2 = element.querySelectorAll('.list_content_B');
+    var link3 = element.querySelectorAll('.list_content_B > img');
 
-    keywords.add({
-      'rank': rank!.text,
-      // 'title': title!.text,
-      'url' : link!.attributes['href']
-    });
+    // var link = element.querySelector('.list_title_B');
+    // var rank = element.querySelector('.list_content_B');
+    // var img = element.querySelector('.list_content_B > img');
 
-    print(keywords);
+    // keywords.add({
+    //   'rank': rank!.text,
+    //   'url' : link!.attributes['href'],
+    //   'img' : img!.attributes['src']
+    // });
+
+    // print(keywords);
   }
 
   // if (response.statusCode == 200) {
