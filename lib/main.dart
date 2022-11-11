@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
@@ -49,25 +50,25 @@ test() async {
       if (strFirstIndex == -1 || strSecondIndex == -1) {
         price = '';
       } else {
-        price = contentTxt?.substring(strFirstIndex!, strSecondIndex);
+        price = contentTxt?.substring(strFirstIndex!, strSecondIndex).trim().replaceAll('&gt;', '>');
       }
 
       if (strSecondIndex == -1 || strThirdIndex == -1) {
         size = '';
       } else {
-        size = contentTxt?.substring(strSecondIndex!, strThirdIndex);
+        size = contentTxt?.substring(strSecondIndex!, strThirdIndex).trim();
       }
 
       if (strThirdIndex == -1 || strFourthIndex == -1) {
         useDate = '';
       } else {
-        useDate = contentTxt?.substring(strThirdIndex!, strFourthIndex);
+        useDate = contentTxt?.substring(strThirdIndex!, strFourthIndex).trim();
       }
 
       if (strFourthIndex == -1) {
         detailDesc = '';
       } else {
-        detailDesc = contentTxt?.substring(strFourthIndex!);
+        detailDesc = contentTxt?.substring(strFourthIndex!).trim();
       }
 
       var strTime = element
@@ -77,16 +78,31 @@ test() async {
           .nodes[1]
           .toString();
 
+      var title = element.querySelector('.list_title_B')?.nodes[4].attributes['title'];
+      var time = strTime?.substring(strTime.indexOf('|') + 1, strTime.lastIndexOf('|')).trim();
+
+      var contains = false;
+
+      for(var item in _keywords){
+        if(item['title'] == title && item['time'] == time) {
+          contains = true;
+          break;
+        }
+      }
+
+      if(contains){
+        continue;
+      }
+
       _keywords.add({
+        'title' : title,
         'img': element.querySelector('img')?.attributes['src'],
         'url': element.querySelector('a')?.attributes['href'],
         'price': price,
         'size': size,
         'use_date': useDate,
         'detail_desc': detailDesc,
-        'time': strTime
-            ?.substring(strTime.indexOf('|') + 1, strTime.lastIndexOf('|'))
-            .trim()
+        'time': time
       });
     }
   }
@@ -112,7 +128,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Used Bike List'),
     );
   }
 }
@@ -125,9 +141,15 @@ class BikeTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-     leading: Image.network('https://' + _doSsaUrl + _bikeInfo['img']),
-      title: Text(_bikeInfo['price']),
-      subtitle: Text(_bikeInfo['detail_desc']),
+     //leading: Image.network('https://' + _doSsaUrl + _bikeInfo['img']),
+      leading: ExtendedImage.network(
+        'https://' + _doSsaUrl + _bikeInfo['img'],
+        width: 100,
+        cache: true,
+      ),
+      title: Text(_bikeInfo['title']),
+      subtitle: Text(_bikeInfo['time']+'\n'+_bikeInfo['price']+'\n'+_bikeInfo['size']+'\n'+_bikeInfo['use_date']+'\n'+_bikeInfo['detail_desc']),
+      // onTap: Navigator.push(context, route),
       //trailing: PersonHandIcon(_bikeInfo.isLeftHand),
     );
   }
