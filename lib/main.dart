@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-
+import 'dart:js' as js;
+import 'dart:html' as html;
 import 'package:http/http.dart' as http;
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
@@ -97,7 +98,7 @@ test() async {
       _keywords.add({
         'title' : title,
         'img': element.querySelector('img')?.attributes['src'],
-        'url': element.querySelector('a')?.attributes['href'],
+        'url': element.querySelector('a')?.attributes['href']?.substring(1),
         'price': price,
         'size': size,
         'use_date': useDate,
@@ -141,15 +142,22 @@ class BikeTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-     //leading: Image.network('https://' + _doSsaUrl + _bikeInfo['img']),
-      leading: ExtendedImage.network(
-        'https://' + _doSsaUrl + _bikeInfo['img'],
-        width: 100,
-        cache: true,
-      ),
+    // leading: Image.network('https://$_doSsaUrl' + _bikeInfo['img']),
+
+      leading: Image.network('https://corearoadbike.com/data/file/Menu01Top6/view/1668159635078_Bl1Qj.jpg',
+        height: 500,
+        fit: BoxFit.contain,),
+      // leading: ExtendedImage.network(
+      //   'https://' + _doSsaUrl + _bikeInfo['img'],
+      //   width: 100,
+      //   cache: true,
+      // ),
       title: Text(_bikeInfo['title']),
       subtitle: Text(_bikeInfo['time']+'\n'+_bikeInfo['price']+'\n'+_bikeInfo['size']+'\n'+_bikeInfo['use_date']+'\n'+_bikeInfo['detail_desc']),
-      // onTap: Navigator.push(context, route),
+      onTap: (){
+      //  html.window.open('https://$_doSsaUrl' + _bikeInfo['url'], 'new tab');
+        js.context.callMethod('open', ['https://$_doSsaUrl' + '/board' + _bikeInfo['url']]);
+      },
       //trailing: PersonHandIcon(_bikeInfo.isLeftHand),
     );
   }
